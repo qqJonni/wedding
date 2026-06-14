@@ -11,7 +11,7 @@ const swatches = [
   { name: "Шалфей",  src: "/swatch-sage-v2.png" },
   { name: "Шампань", src: "/swatch-champagne.png" },
   { name: "Айвори",  src: "/swatch-ivory.png" },
-  { name: "Хаки",    src: "/swatch-khaki.png" },
+  { name: "Олива",   src: "/swatch-khaki.png" },
   { name: "Чёрный",  src: "/swatch-black.png" },
 ];
 
@@ -20,12 +20,20 @@ export default function DressCode() {
 
   return (
     <section className="w-full mb-10 sm:mb-14 animate-fade-up animate-delay-400">
-      {/* Заголовок */}
+      {/* Заголовок — 10px×1.5=15px */}
       <p
-        className="text-[10px] sm:text-xs tracking-[0.2em] uppercase text-center mb-8 sm:mb-10"
+        className="text-[15px] sm:text-[18px] tracking-[0.2em] uppercase text-center mb-4"
         style={{ color: C.accent }}
       >
         Дресс-код
+      </p>
+
+      {/* Подзаголовок — 12px×1.5=18px */}
+      <p
+        className="text-[18px] sm:text-[21px] text-center leading-relaxed mb-8 sm:mb-10 max-w-xs mx-auto"
+        style={{ color: C.dark, opacity: 0.7 }}
+      >
+        Пожалуйста, соблюдайте дресс-код. Мы будем очень рады, если вы поддержите атмосферу вечера своим нарядом.
       </p>
 
       {/* Ряд 1 — 3 кружка */}
@@ -42,8 +50,9 @@ export default function DressCode() {
                 sizes="96px"
               />
             </div>
+            {/* 9px×1.5=14px */}
             <span
-              className="text-[9px] sm:text-[10px] tracking-wide uppercase"
+              className="text-[14px] sm:text-[15px] tracking-wide uppercase"
               style={{ color: C.accent }}
             >
               {s.name}
@@ -67,7 +76,7 @@ export default function DressCode() {
               />
             </div>
             <span
-              className="text-[9px] sm:text-[10px] tracking-wide uppercase"
+              className="text-[14px] sm:text-[15px] tracking-wide uppercase"
               style={{ color: C.accent }}
             >
               {s.name}
@@ -76,10 +85,10 @@ export default function DressCode() {
         ))}
       </div>
 
-      {/* Пометка */}
+      {/* Пометка — 12px×1.5=18px */}
       {dressCode.note && (
         <p
-          className="text-xs text-center mb-8"
+          className="text-[18px] text-center mb-8"
           style={{ color: C.dark, opacity: 0.5 }}
         >
           {dressCode.note}
@@ -92,15 +101,16 @@ export default function DressCode() {
         style={{ background: C.accent, opacity: 0.5 }}
       />
 
-      {/* Lady / Men — в одну колонку, фото целиком */}
+      {/* Lady / Men */}
       <div className="flex flex-col gap-5">
         {[
           { label: "Lady", src: "/lady.jpg", alt: "Пример женского образа" },
           { label: "Men",  src: "/men.jpg",  alt: "Пример мужского образа" },
         ].map(({ label, src, alt }) => (
           <div key={label} className="flex flex-col gap-2">
+            {/* 10px×1.5=15px */}
             <p
-              className="text-[10px] tracking-[0.2em] uppercase text-center"
+              className="text-[15px] tracking-[0.2em] uppercase text-center"
               style={{ color: C.accent }}
             >
               {label}
@@ -116,6 +126,25 @@ export default function DressCode() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Пожелания */}
+      <div
+        className="mt-8 sm:mt-10 px-4 py-5 text-center"
+        style={{ borderTop: "1px solid rgba(138,147,127,0.35)" }}
+      >
+        <p
+          className="text-[15px] sm:text-[18px] tracking-[0.2em] uppercase text-center mb-4"
+          style={{ color: C.accent }}
+        >
+          Пожелания
+        </p>
+        <p
+          className="text-[18px] sm:text-[21px] leading-loose"
+          style={{ color: C.dark, opacity: 0.75 }}
+        >
+          Дорогие гости, ваше присутствие — главный подарок для нас. Если вы хотите поздравить нас материально, мы будем благодарны за денежный вклад в наш семейный бюджет. От цветов, пожалуйста, воздержитесь — мы очень ценим ваше внимание и понимание.
+        </p>
       </div>
     </section>
   );

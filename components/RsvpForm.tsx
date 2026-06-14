@@ -65,11 +65,12 @@ export default function RsvpForm() {
         className="w-full text-center py-10 sm:py-12 px-6 animate-fade-up"
         style={{ background: C.light }}
       >
-        <p className="text-xl sm:text-2xl font-medium mb-3" style={{ color: C.dark }}>
+        {/* 20px×1.5=30px */}
+        <p className="text-[30px] sm:text-[36px] font-medium mb-3" style={{ color: C.dark }}>
           Спасибо!
         </p>
         <p
-          className="text-sm leading-relaxed"
+          className="text-[21px] leading-relaxed"
           style={{ color: C.dark, opacity: 0.75 }}
         >
           Ваш ответ записан. Мы очень ждём вас.
@@ -101,13 +102,15 @@ export default function RsvpForm() {
 
       {/* Имя */}
       <div>
+        {/* label: 10px×1.5=15px */}
         <label
           htmlFor="name"
-          className="block text-[10px] sm:text-xs tracking-[0.15em] uppercase mb-2"
+          className="block text-[15px] sm:text-[18px] tracking-[0.15em] uppercase mb-2"
           style={{ color: C.accent }}
         >
           Имя и фамилия <span aria-hidden="true">*</span>
         </label>
+        {/* input: ≥16px чтобы iOS не зумил */}
         <input
           id="name"
           type="text"
@@ -115,26 +118,24 @@ export default function RsvpForm() {
           onChange={(e) => { setName(e.target.value); setErrors((p) => ({ ...p, name: "" })); }}
           placeholder="Иван Иванов"
           autoComplete="name"
-          /* text-base предотвращает авто-зум на iOS (шрифт < 16px = зум) */
-          className="w-full px-0 py-3 text-base sm:text-sm border-b bg-transparent transition-colors placeholder:opacity-40"
+          className="w-full px-0 py-3 text-[18px] sm:text-[21px] border-b bg-transparent transition-colors placeholder:opacity-40"
           style={{ borderColor: errors.name ? C.taupe : C.accent, color: C.dark, outline: "none" }}
           aria-invalid={!!errors.name}
         />
         {errors.name && (
-          <p className="text-xs mt-1" style={{ color: C.taupe }}>{errors.name}</p>
+          <p className="text-[18px] mt-1" style={{ color: C.taupe }}>{errors.name}</p>
         )}
       </div>
 
       {/* Придёте? */}
       <div>
         <p
-          className="text-[10px] sm:text-xs tracking-[0.15em] uppercase mb-3"
+          className="text-[15px] sm:text-[18px] tracking-[0.15em] uppercase mb-3"
           style={{ color: C.accent }}
           id="attending-label"
         >
           Придёте? <span aria-hidden="true">*</span>
         </p>
-        {/* Стекаем кнопки на совсем маленьких экранах */}
         <div
           className="grid grid-cols-2 gap-2 sm:gap-3"
           role="radiogroup"
@@ -146,13 +147,12 @@ export default function RsvpForm() {
           ].map((opt) => (
             <label
               key={opt.value}
-              className="flex items-center justify-center py-4 sm:py-3 px-2 sm:px-4 text-sm cursor-pointer border transition-all duration-150 text-center leading-tight"
+              className="flex items-center justify-center py-4 sm:py-3 px-2 sm:px-4 text-[21px] cursor-pointer border transition-all duration-150 text-center leading-tight"
               style={{
                 borderColor: attending === opt.value ? C.dark : C.accent,
                 background: attending === opt.value ? C.dark : "transparent",
                 color: attending === opt.value ? C.light : C.dark,
-                /* Минимум 44px для комфортного тапа */
-                minHeight: "44px",
+                minHeight: "48px",
               }}
             >
               <input
@@ -171,7 +171,7 @@ export default function RsvpForm() {
           ))}
         </div>
         {errors.attending && (
-          <p className="text-xs mt-1" style={{ color: C.taupe }}>{errors.attending}</p>
+          <p className="text-[18px] mt-1" style={{ color: C.taupe }}>{errors.attending}</p>
         )}
       </div>
 
@@ -180,7 +180,7 @@ export default function RsvpForm() {
         <div className="animate-fade-up">
           <label
             htmlFor="guest-count"
-            className="block text-[10px] sm:text-xs tracking-[0.15em] uppercase mb-2"
+            className="block text-[15px] sm:text-[18px] tracking-[0.15em] uppercase mb-2"
             style={{ color: C.accent }}
           >
             Гостей с вами (кроме вас)
@@ -189,7 +189,7 @@ export default function RsvpForm() {
             id="guest-count"
             value={guestCount}
             onChange={(e) => setGuestCount(Number(e.target.value))}
-            className="w-full px-0 py-3 text-base sm:text-sm border-b bg-transparent appearance-none cursor-pointer"
+            className="w-full px-0 py-3 text-[18px] sm:text-[21px] border-b bg-transparent appearance-none cursor-pointer"
             style={{ borderColor: C.accent, color: C.dark, outline: "none" }}
           >
             {[0, 1, 2, 3, 4, 5].map((n) => (
@@ -205,7 +205,7 @@ export default function RsvpForm() {
       <div>
         <label
           htmlFor="comment"
-          className="block text-[10px] sm:text-xs tracking-[0.15em] uppercase mb-2"
+          className="block text-[15px] sm:text-[18px] tracking-[0.15em] uppercase mb-2"
           style={{ color: C.accent }}
         >
           Пожелания (необязательно)
@@ -216,26 +216,26 @@ export default function RsvpForm() {
           onChange={(e) => setComment(e.target.value)}
           placeholder="Предпочтения по меню, особые пожелания…"
           rows={3}
-          className="w-full px-0 py-3 text-base sm:text-sm border-b bg-transparent resize-none placeholder:opacity-40"
+          className="w-full px-0 py-3 text-[18px] sm:text-[21px] border-b bg-transparent resize-none placeholder:opacity-40"
           style={{ borderColor: C.accent, color: C.dark, outline: "none" }}
         />
       </div>
 
       {formState === "error" && (
-        <p className="text-sm text-center" style={{ color: C.taupe }}>
+        <p className="text-[21px] text-center" style={{ color: C.taupe }}>
           Что-то пошло не так. Попробуйте ещё раз.
         </p>
       )}
 
-      {/* Кнопка — высота 52px для удобного тапа на мобиле */}
+      {/* Кнопка */}
       <button
         type="submit"
         disabled={formState === "submitting"}
-        className="w-full text-xs sm:text-sm tracking-[0.2em] uppercase font-medium transition-all duration-200 disabled:opacity-50 active:opacity-70"
+        className="w-full text-[18px] sm:text-[21px] tracking-[0.2em] uppercase font-medium transition-all duration-200 disabled:opacity-50 active:opacity-70"
         style={{
           background: C.dark,
           color: C.light,
-          height: "52px",
+          height: "56px",
         }}
         onMouseEnter={(e) => {
           if (formState !== "submitting")

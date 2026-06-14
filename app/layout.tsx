@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope } from "next/font/google";
+import { Manrope, Marck_Script } from "next/font/google";
 import "./globals.css";
 import { config } from "@/content";
 
@@ -10,10 +10,18 @@ const manrope = Manrope({
   variable: "--font-manrope",
 });
 
+// Marck Script — каллиграфический шрифт с поддержкой кириллицы
+const marckScript = Marck_Script({
+  subsets: ["latin", "cyrillic"],
+  weight: "400",
+  display: "swap",
+  variable: "--font-script",
+});
+
 export const viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1, // запрет авто-зума при фокусе на input (iOS)
+  maximumScale: 1,
 };
 
 export const metadata: Metadata = {
@@ -34,7 +42,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ru">
-      <body className={`${manrope.variable} font-sans antialiased`}>
+      <body className={`${manrope.variable} ${marckScript.variable} font-sans antialiased`}>
         {children}
       </body>
     </html>

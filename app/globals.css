@@ -2,6 +2,7 @@
 
 @theme inline {
   --font-sans: var(--font-manrope);
+  --font-script: var(--font-script);
 
   /* Ash Wood — основной фон */
   --color-sand: #D7D1C6;
