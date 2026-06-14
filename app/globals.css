@@ -3,11 +3,16 @@
 @theme inline {
   --font-sans: var(--font-manrope);
 
-  --color-sand: #CBB8A2;
-  --color-sand-light: #DDCEBC;
-  --color-olive: #44492B;
-  --color-dark: #252922;
-  --color-taupe: #C2A19B;
+  /* Ash Wood — основной фон */
+  --color-sand: #D7D1C6;
+  /* Nordic Linen — карточки, форма */
+  --color-sand-light: #EDEAE3;
+  /* Pine Smoke — акцент (бывший оливковый) */
+  --color-olive: #8A937F;
+  /* Iron Grey — текст, кнопки */
+  --color-dark: #3F4244;
+  /* Frost White — светлый акцент */
+  --color-frost: #F7F7F5;
 }
 
 *, *::before, *::after {
@@ -19,13 +24,12 @@ html {
 }
 
 body {
-  background-color: #CBB8A2;
-  color: #252922;
+  background-color: #D7D1C6;
+  color: #3F4244;
   font-family: var(--font-manrope), system-ui, sans-serif;
   min-height: 100dvh;
 }
 
-/* Мягкое появление при загрузке */
 @keyframes fadeUp {
   from {
     opacity: 0;
@@ -48,8 +52,7 @@ body {
 .animate-delay-500 { animation-delay: 0.5s; }
 .animate-delay-600 { animation-delay: 0.6s; }
 
-/* Фокус-стили для доступности */
 :focus-visible {
-  outline: 2px solid #44492B;
+  outline: 2px solid #8A937F;
   outline-offset: 2px;
 }

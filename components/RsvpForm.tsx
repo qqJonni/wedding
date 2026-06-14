@@ -2,8 +2,15 @@
 
 import { useState } from "react";
 
-type FormState = "idle" | "submitting" | "success" | "error";
+const C = {
+  light: "#EDEAE3",
+  accent: "#8A937F",
+  dark: "#3F4244",
+  frost: "#F7F7F5",
+  taupe: "#C2A19B",
+};
 
+type FormState = "idle" | "submitting" | "success" | "error";
 type Attending = "yes" | "no" | "";
 
 export default function RsvpForm() {
@@ -11,8 +18,7 @@ export default function RsvpForm() {
   const [attending, setAttending] = useState<Attending>("");
   const [guestCount, setGuestCount] = useState(0);
   const [comment, setComment] = useState("");
-  const [honeypot, setHoneypot] = useState(""); // антиспам
-
+  const [honeypot, setHoneypot] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formState, setFormState] = useState<FormState>("idle");
 
@@ -25,13 +31,8 @@ export default function RsvpForm() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-
     const errs = validate();
-    if (Object.keys(errs).length > 0) {
-      setErrors(errs);
-      return;
-    }
-
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
     setFormState("submitting");
 
     try {
@@ -43,20 +44,15 @@ export default function RsvpForm() {
           attending,
           guestCount: attending === "yes" ? guestCount : 0,
           comment: comment.trim(),
-          _hp: honeypot, // honeypot для серверной проверки
+          _hp: honeypot,
         }),
       });
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        // Если сервер вернул «уже отправлено» — считаем успехом
-        if (data?.alreadySubmitted) {
-          setFormState("success");
-          return;
-        }
+        if (data?.alreadySubmitted) { setFormState("success"); return; }
         throw new Error("server error");
       }
-
       setFormState("success");
     } catch {
       setFormState("error");
@@ -66,13 +62,16 @@ export default function RsvpForm() {
   if (formState === "success") {
     return (
       <div
-        className="w-full text-center py-12 px-6 rounded-sm animate-fade-up"
-        style={{ background: "#DDCEBC" }}
+        className="w-full text-center py-10 sm:py-12 px-6 animate-fade-up"
+        style={{ background: C.light }}
       >
-        <p className="text-2xl font-medium mb-3" style={{ color: "#252922" }}>
+        <p className="text-xl sm:text-2xl font-medium mb-3" style={{ color: C.dark }}>
           Спасибо!
         </p>
-        <p className="text-sm leading-relaxed" style={{ color: "#252922", opacity: 0.8 }}>
+        <p
+          className="text-sm leading-relaxed"
+          style={{ color: C.dark, opacity: 0.75 }}
+        >
           Ваш ответ записан. Мы очень ждём вас.
         </p>
       </div>
@@ -83,10 +82,10 @@ export default function RsvpForm() {
     <form
       onSubmit={handleSubmit}
       noValidate
-      className="w-full space-y-6"
-      style={{ background: "#DDCEBC", padding: "2rem 1.5rem", borderRadius: "2px" }}
+      className="w-full space-y-5 sm:space-y-6"
+      style={{ background: C.light, padding: "1.5rem 1.25rem" }}
     >
-      {/* Honeypot — скрытое поле, боты заполняют его, люди нет */}
+      {/* Honeypot */}
       <div className="sr-only" aria-hidden="true">
         <label htmlFor="hp_field">Не заполняйте это поле</label>
         <input
@@ -104,8 +103,8 @@ export default function RsvpForm() {
       <div>
         <label
           htmlFor="name"
-          className="block text-xs tracking-[0.15em] uppercase mb-2"
-          style={{ color: "#44492B" }}
+          className="block text-[10px] sm:text-xs tracking-[0.15em] uppercase mb-2"
+          style={{ color: C.accent }}
         >
           Имя и фамилия <span aria-hidden="true">*</span>
         </label>
@@ -113,53 +112,47 @@ export default function RsvpForm() {
           id="name"
           type="text"
           value={name}
-          onChange={(e) => {
-            setName(e.target.value);
-            setErrors((prev) => ({ ...prev, name: "" }));
-          }}
+          onChange={(e) => { setName(e.target.value); setErrors((p) => ({ ...p, name: "" })); }}
           placeholder="Иван Иванов"
           autoComplete="name"
-          className="w-full px-4 py-3 text-sm border-b bg-transparent transition-colors placeholder:opacity-40"
-          style={{
-            borderColor: errors.name ? "#C2A19B" : "#44492B",
-            color: "#252922",
-            outline: "none",
-          }}
-          aria-describedby={errors.name ? "name-error" : undefined}
+          /* text-base предотвращает авто-зум на iOS (шрифт < 16px = зум) */
+          className="w-full px-0 py-3 text-base sm:text-sm border-b bg-transparent transition-colors placeholder:opacity-40"
+          style={{ borderColor: errors.name ? C.taupe : C.accent, color: C.dark, outline: "none" }}
           aria-invalid={!!errors.name}
         />
         {errors.name && (
-          <p id="name-error" className="text-xs mt-1" style={{ color: "#C2A19B" }}>
-            {errors.name}
-          </p>
+          <p className="text-xs mt-1" style={{ color: C.taupe }}>{errors.name}</p>
         )}
       </div>
 
       {/* Придёте? */}
       <div>
         <p
-          className="text-xs tracking-[0.15em] uppercase mb-3"
-          style={{ color: "#44492B" }}
+          className="text-[10px] sm:text-xs tracking-[0.15em] uppercase mb-3"
+          style={{ color: C.accent }}
           id="attending-label"
         >
           Придёте? <span aria-hidden="true">*</span>
         </p>
+        {/* Стекаем кнопки на совсем маленьких экранах */}
         <div
-          className="grid grid-cols-2 gap-3"
+          className="grid grid-cols-2 gap-2 sm:gap-3"
           role="radiogroup"
           aria-labelledby="attending-label"
         >
           {[
             { value: "yes", label: "Буду" },
-            { value: "no", label: "К сожалению, не смогу" },
+            { value: "no", label: "Не смогу" },
           ].map((opt) => (
             <label
               key={opt.value}
-              className="flex items-center justify-center py-3 px-4 text-sm cursor-pointer border transition-all duration-150"
+              className="flex items-center justify-center py-4 sm:py-3 px-2 sm:px-4 text-sm cursor-pointer border transition-all duration-150 text-center leading-tight"
               style={{
-                borderColor: attending === opt.value ? "#252922" : "#44492B",
-                background: attending === opt.value ? "#252922" : "transparent",
-                color: attending === opt.value ? "#DDCEBC" : "#252922",
+                borderColor: attending === opt.value ? C.dark : C.accent,
+                background: attending === opt.value ? C.dark : "transparent",
+                color: attending === opt.value ? C.light : C.dark,
+                /* Минимум 44px для комфортного тапа */
+                minHeight: "44px",
               }}
             >
               <input
@@ -169,7 +162,7 @@ export default function RsvpForm() {
                 checked={attending === opt.value}
                 onChange={() => {
                   setAttending(opt.value as Attending);
-                  setErrors((prev) => ({ ...prev, attending: "" }));
+                  setErrors((p) => ({ ...p, attending: "" }));
                 }}
                 className="sr-only"
               />
@@ -178,19 +171,17 @@ export default function RsvpForm() {
           ))}
         </div>
         {errors.attending && (
-          <p className="text-xs mt-1" style={{ color: "#C2A19B" }}>
-            {errors.attending}
-          </p>
+          <p className="text-xs mt-1" style={{ color: C.taupe }}>{errors.attending}</p>
         )}
       </div>
 
-      {/* Количество гостей (только если «Буду») */}
+      {/* Кол-во гостей */}
       {attending === "yes" && (
         <div className="animate-fade-up">
           <label
             htmlFor="guest-count"
-            className="block text-xs tracking-[0.15em] uppercase mb-2"
-            style={{ color: "#44492B" }}
+            className="block text-[10px] sm:text-xs tracking-[0.15em] uppercase mb-2"
+            style={{ color: C.accent }}
           >
             Гостей с вами (кроме вас)
           </label>
@@ -198,24 +189,24 @@ export default function RsvpForm() {
             id="guest-count"
             value={guestCount}
             onChange={(e) => setGuestCount(Number(e.target.value))}
-            className="w-full px-4 py-3 text-sm border-b bg-transparent appearance-none cursor-pointer"
-            style={{ borderColor: "#44492B", color: "#252922", outline: "none" }}
+            className="w-full px-0 py-3 text-base sm:text-sm border-b bg-transparent appearance-none cursor-pointer"
+            style={{ borderColor: C.accent, color: C.dark, outline: "none" }}
           >
             {[0, 1, 2, 3, 4, 5].map((n) => (
-              <option key={n} value={n} style={{ background: "#DDCEBC" }}>
-                {n === 0 ? "Приду один(а)" : `+${n}`}
+              <option key={n} value={n} style={{ background: C.light }}>
+                {n === 0 ? "Приду один(а)" : `+${n} человек`}
               </option>
             ))}
           </select>
         </div>
       )}
 
-      {/* Комментарий / пожелание */}
+      {/* Комментарий */}
       <div>
         <label
           htmlFor="comment"
-          className="block text-xs tracking-[0.15em] uppercase mb-2"
-          style={{ color: "#44492B" }}
+          className="block text-[10px] sm:text-xs tracking-[0.15em] uppercase mb-2"
+          style={{ color: C.accent }}
         >
           Пожелания (необязательно)
         </label>
@@ -225,34 +216,33 @@ export default function RsvpForm() {
           onChange={(e) => setComment(e.target.value)}
           placeholder="Предпочтения по меню, особые пожелания…"
           rows={3}
-          className="w-full px-4 py-3 text-sm border-b bg-transparent resize-none placeholder:opacity-40"
-          style={{ borderColor: "#44492B", color: "#252922", outline: "none" }}
+          className="w-full px-0 py-3 text-base sm:text-sm border-b bg-transparent resize-none placeholder:opacity-40"
+          style={{ borderColor: C.accent, color: C.dark, outline: "none" }}
         />
       </div>
 
-      {/* Ошибка сервера */}
       {formState === "error" && (
-        <p className="text-sm text-center" style={{ color: "#C2A19B" }}>
+        <p className="text-sm text-center" style={{ color: C.taupe }}>
           Что-то пошло не так. Попробуйте ещё раз.
         </p>
       )}
 
-      {/* Кнопка */}
+      {/* Кнопка — высота 52px для удобного тапа на мобиле */}
       <button
         type="submit"
         disabled={formState === "submitting"}
-        className="w-full py-4 text-sm tracking-[0.2em] uppercase font-medium transition-all duration-200 disabled:opacity-50"
+        className="w-full text-xs sm:text-sm tracking-[0.2em] uppercase font-medium transition-all duration-200 disabled:opacity-50 active:opacity-70"
         style={{
-          background: "#252922",
-          color: "#DDCEBC",
+          background: C.dark,
+          color: C.light,
+          height: "52px",
         }}
         onMouseEnter={(e) => {
-          if (formState !== "submitting") {
-            (e.currentTarget as HTMLButtonElement).style.background = "#44492B";
-          }
+          if (formState !== "submitting")
+            (e.currentTarget as HTMLButtonElement).style.background = C.accent;
         }}
         onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background = "#252922";
+          (e.currentTarget as HTMLButtonElement).style.background = C.dark;
         }}
       >
         {formState === "submitting" ? "Отправляем…" : "Подтвердить"}

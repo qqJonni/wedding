@@ -16,8 +16,7 @@ export const config = {
   venue: {
     name: "LAKEHOUSE PERM",
     address: "деревня Касимово, набережная 7",
-    // Замените на реальную ссылку на карты
-    mapUrl: "https://yandex.ru/maps/?text=Касимово+набережная+7+Пермь",
+    mapUrl: "https://yandex.ru/maps/?pt=56.220945,57.816681&z=17&l=map",
   },
 
   // Текст приглашения (1–2 предложения)
@@ -27,11 +26,31 @@ export const config = {
   // Тайминг дня (показывать/скрывать через флаг showSchedule)
   showSchedule: true,
   schedule: [
-    { time: "15:30", label: "Сбор гостей" },
-    { time: "16:00", label: "Выездная церемония" },
-    { time: "17:00", label: "Фуршет и прогулка" },
-    { time: "18:00", label: "Банкет" },
+    { time: "15:30", label: "Сбор гостей и фуршет" },
+    { time: "16:00", label: "Церемония" },
+    { time: "16:30", label: "Фотосессия" },
+    { time: "17:00", label: "Праздничный банкет" },
+    { time: "21:00", label: "Танцы" },
+    { time: "23:00", label: "Окончание торжества" },
   ],
+
+  // Дресс-код
+  dressCode: {
+    show: true,
+    // Цвета взяты с референса ткани
+    colors: [
+      { name: "Шалфей",    hex: "#B8C9A8" },
+      { name: "Шампань",   hex: "#C9AD8A" },
+      { name: "Айвори",    hex: "#E2D0A8" },
+      { name: "Хаки",      hex: "#556030" },
+      { name: "Чёрный",    hex: "#1C1C1C" },
+    ],
+    // Положите фото в public/ и укажите путь.
+    // Можно одно общее фото или два отдельных (lady / men).
+    photoLady: "/dresscode-lady.jpg",
+    photoMen:  "/dresscode-men.jpg",
+    note: "Просим избегать белого цвета в нарядах",
+  },
 
   // Контакт для вопросов (телефон или ссылка)
   contact: "+7 (___) ___-__-__",

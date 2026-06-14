@@ -10,6 +10,12 @@ const manrope = Manrope({
   variable: "--font-manrope",
 });
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1, // запрет авто-зума при фокусе на input (iOS)
+};
+
 export const metadata: Metadata = {
   title: config.seo.title,
   description: config.seo.description,
