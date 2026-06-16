@@ -196,6 +196,30 @@ export default function Home() {
           <RsvpForm />
         </section>
 
+        {/* ── 7.5. VK ЧАТ ── */}
+        <section className="w-full text-center mt-12 sm:mt-16 animate-fade-up">
+          <p
+            className="text-[18px] sm:text-[21px] mb-4"
+            style={{ color: C.dark, opacity: 0.8 }}
+          >
+            Переходите в наш групповой чат
+          </p>
+          <a
+            href="https://vk.me/join/dG_8Xr_GEVAIoH8BXp2STj6j2KzaGXyw_YU="
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/qr.jpg"
+              alt="QR-код группового чата ВКонтакте"
+              className="mx-auto"
+              style={{ width: "200px", height: "200px", objectFit: "contain" }}
+            />
+          </a>
+        </section>
+
         {/* ── 8. ФУТЕР ── */}
         <footer
           className="w-full text-center mt-12 sm:mt-16 pt-6 sm:pt-8 animate-fade-up animate-delay-600"
@@ -204,17 +228,8 @@ export default function Home() {
           <p className="text-[21px] font-medium mb-1" style={{ color: C.dark }}>
             {config.names.groom} &amp; {config.names.bride}
           </p>
-          <p className="text-[15px] tracking-widest mb-4" style={{ color: C.accent }}>
+          <p className="text-[15px] tracking-widest" style={{ color: C.accent }}>
             {config.date}
-          </p>
-          <p className="text-[18px]" style={{ color: C.dark, opacity: 0.6 }}>
-            Вопросы:{" "}
-            <a
-              href={`tel:${config.contact.replace(/\D/g, "")}`}
-              className="underline underline-offset-2"
-            >
-              {config.contact}
-            </a>
           </p>
         </footer>
       </div>
