@@ -1,251 +1,170 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useState } from "react";
+import { submitRsvp } from "@/app/actions";
 
 const C = {
-  light: "#EDEAE3",
+  light:  "#EDEAE3",
   accent: "#8A937F",
-  dark: "#3F4244",
-  frost: "#F7F7F5",
-  taupe: "#C2A19B",
+  dark:   "#3F4244",
+  taupe:  "#C2A19B",
+  bg:     "#D7D1C6",
 };
 
-type FormState = "idle" | "submitting" | "success" | "error";
-type Attending = "yes" | "no" | "";
+const ALCOHOL_OPTIONS = [
+  "Вино белое",
+  "Вино красное",
+  "Шампанское",
+  "Водка",
+  "Коньяк",
+  "Не буду пить",
+];
 
 export default function RsvpForm() {
-  const [name, setName] = useState("");
-  const [attending, setAttending] = useState<Attending>("");
-  const [guestCount, setGuestCount] = useState(0);
-  const [comment, setComment] = useState("");
-  const [honeypot, setHoneypot] = useState("");
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [formState, setFormState] = useState<FormState>("idle");
+  const [state, action, pending] = useActionState(submitRsvp, null);
+  const [attending, setAttending] = useState<"yes" | "no" | "">("");
+  const [alcohol, setAlcohol]     = useState<string[]>([]);
 
-  function validate() {
-    const e: Record<string, string> = {};
-    if (!name.trim()) e.name = "Пожалуйста, введите ваше имя";
-    if (!attending) e.attending = "Выберите вариант ответа";
-    return e;
+  function toggleAlcohol(opt: string) {
+    setAlcohol((prev) =>
+      prev.includes(opt) ? prev.filter((o) => o !== opt) : [...prev, opt]
+    );
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const errs = validate();
-    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
-    setFormState("submitting");
-
-    try {
-      const res = await fetch("/api/rsvp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: name.trim(),
-          attending,
-          guestCount: attending === "yes" ? guestCount : 0,
-          comment: comment.trim(),
-          _hp: honeypot,
-        }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        if (data?.alreadySubmitted) { setFormState("success"); return; }
-        throw new Error("server error");
-      }
-      setFormState("success");
-    } catch {
-      setFormState("error");
-    }
-  }
-
-  if (formState === "success") {
+  if (state?.status === "success") {
     return (
-      <div
-        className="w-full text-center py-10 sm:py-12 px-6 animate-fade-up"
-        style={{ background: C.light }}
-      >
-        {/* 20px×1.5=30px */}
+      <div className="w-full text-center py-10 px-6 animate-fade-up" style={{ background: C.light }}>
         <p className="text-[30px] sm:text-[36px] font-medium mb-3" style={{ color: C.dark }}>
           Спасибо!
         </p>
-        <p
-          className="text-[21px] leading-relaxed"
-          style={{ color: C.dark, opacity: 0.75 }}
-        >
+        <p className="text-[21px] leading-relaxed" style={{ color: C.dark, opacity: 0.75 }}>
           Ваш ответ записан. Мы очень ждём вас.
         </p>
       </div>
     );
   }
 
+  const btnStyle = (active: boolean) => ({
+    borderColor: active ? C.dark : C.accent,
+    background:  active ? C.dark : "transparent",
+    color:       active ? C.light : C.dark,
+    minHeight:   "52px",
+    border:      `1px solid ${active ? C.dark : C.accent}`,
+    cursor:      "pointer",
+    transition:  "all 0.15s",
+  });
+
   return (
-    <form
-      onSubmit={handleSubmit}
-      noValidate
-      className="w-full space-y-5 sm:space-y-6"
-      style={{ background: C.light, padding: "1.5rem 1.25rem" }}
-    >
+    <form action={action} noValidate className="w-full space-y-6" style={{ background: C.light, padding: "1.5rem 1.25rem" }}>
       {/* Honeypot */}
-      <div className="sr-only" aria-hidden="true">
-        <label htmlFor="hp_field">Не заполняйте это поле</label>
-        <input
-          id="hp_field"
-          name="hp_field"
-          type="text"
-          value={honeypot}
-          onChange={(e) => setHoneypot(e.target.value)}
-          tabIndex={-1}
-          autoComplete="off"
-        />
-      </div>
+      <input type="text" name="_hp" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ display: "none" }} />
 
       {/* Имя */}
       <div>
-        {/* label: 10px×1.5=15px */}
-        <label
-          htmlFor="name"
-          className="block text-[15px] sm:text-[18px] tracking-[0.15em] uppercase mb-2"
-          style={{ color: C.accent }}
-        >
-          Имя и фамилия <span aria-hidden="true">*</span>
+        <label htmlFor="rsvp-name" className="block text-[15px] sm:text-[18px] tracking-[0.15em] uppercase mb-2" style={{ color: C.accent }}>
+          Имя и фамилия <span aria-hidden>*</span>
         </label>
-        {/* input: ≥16px чтобы iOS не зумил */}
         <input
-          id="name"
+          id="rsvp-name"
+          name="name"
           type="text"
-          value={name}
-          onChange={(e) => { setName(e.target.value); setErrors((p) => ({ ...p, name: "" })); }}
+          required
           placeholder="Иван Иванов"
           autoComplete="name"
-          className="w-full px-0 py-3 text-[18px] sm:text-[21px] border-b bg-transparent transition-colors placeholder:opacity-40"
-          style={{ borderColor: errors.name ? C.taupe : C.accent, color: C.dark, outline: "none" }}
-          aria-invalid={!!errors.name}
+          className="w-full px-0 py-3 text-[18px] sm:text-[21px] border-b bg-transparent placeholder:opacity-40"
+          style={{ borderColor: C.accent, color: C.dark, outline: "none" }}
         />
-        {errors.name && (
-          <p className="text-[18px] mt-1" style={{ color: C.taupe }}>{errors.name}</p>
-        )}
       </div>
 
       {/* Придёте? */}
       <div>
-        <p
-          className="text-[15px] sm:text-[18px] tracking-[0.15em] uppercase mb-3"
-          style={{ color: C.accent }}
-          id="attending-label"
-        >
-          Придёте? <span aria-hidden="true">*</span>
+        <p className="text-[15px] sm:text-[18px] tracking-[0.15em] uppercase mb-3" style={{ color: C.accent }}>
+          Придёте? <span aria-hidden>*</span>
         </p>
-        <div
-          className="grid grid-cols-2 gap-2 sm:gap-3"
-          role="radiogroup"
-          aria-labelledby="attending-label"
-        >
-          {[
-            { value: "yes", label: "Буду" },
-            { value: "no", label: "Не смогу" },
-          ].map((opt) => (
-            <label
-              key={opt.value}
-              className="flex items-center justify-center py-4 sm:py-3 px-2 sm:px-4 text-[21px] cursor-pointer border transition-all duration-150 text-center leading-tight"
-              style={{
-                borderColor: attending === opt.value ? C.dark : C.accent,
-                background: attending === opt.value ? C.dark : "transparent",
-                color: attending === opt.value ? C.light : C.dark,
-                minHeight: "48px",
-              }}
+        {/* hidden input carries the value */}
+        <input type="hidden" name="attending" value={attending} />
+        <div className="grid grid-cols-2 gap-2">
+          {(["yes", "no"] as const).map((v) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => setAttending(v)}
+              className="py-4 text-[21px] text-center"
+              style={btnStyle(attending === v)}
             >
-              <input
-                type="radio"
-                name="attending"
-                value={opt.value}
-                checked={attending === opt.value}
-                onChange={() => {
-                  setAttending(opt.value as Attending);
-                  setErrors((p) => ({ ...p, attending: "" }));
-                }}
-                className="sr-only"
-              />
-              {opt.label}
-            </label>
+              {v === "yes" ? "Буду" : "Не смогу"}
+            </button>
           ))}
         </div>
-        {errors.attending && (
-          <p className="text-[18px] mt-1" style={{ color: C.taupe }}>{errors.attending}</p>
-        )}
       </div>
 
-      {/* Кол-во гостей */}
-      {attending === "yes" && (
-        <div className="animate-fade-up">
-          <label
-            htmlFor="guest-count"
-            className="block text-[15px] sm:text-[18px] tracking-[0.15em] uppercase mb-2"
-            style={{ color: C.accent }}
-          >
-            Гостей с вами (кроме вас)
-          </label>
-          <select
-            id="guest-count"
-            value={guestCount}
-            onChange={(e) => setGuestCount(Number(e.target.value))}
-            className="w-full px-0 py-3 text-[18px] sm:text-[21px] border-b bg-transparent appearance-none cursor-pointer"
-            style={{ borderColor: C.accent, color: C.dark, outline: "none" }}
-          >
-            {[0, 1, 2, 3, 4, 5].map((n) => (
-              <option key={n} value={n} style={{ background: C.light }}>
-                {n === 0 ? "Приду один(а)" : `+${n} человек`}
-              </option>
-            ))}
-          </select>
+      {/* Аллергия */}
+      <div>
+        <label htmlFor="rsvp-allergy" className="block text-[15px] sm:text-[18px] tracking-[0.15em] uppercase mb-2" style={{ color: C.accent }}>
+          Есть ли аллергия? На что?
+        </label>
+        <input
+          id="rsvp-allergy"
+          name="allergy"
+          type="text"
+          placeholder="Например: орехи, цитрусовые, нет"
+          className="w-full px-0 py-3 text-[18px] sm:text-[21px] border-b bg-transparent placeholder:opacity-40"
+          style={{ borderColor: C.accent, color: C.dark, outline: "none" }}
+        />
+      </div>
+
+      {/* Алкоголь */}
+      <div>
+        <p className="text-[15px] sm:text-[18px] tracking-[0.15em] uppercase mb-3" style={{ color: C.accent }}>
+          Предпочтения по алкоголю
+        </p>
+        {/* multiple hidden inputs for alcohol */}
+        {alcohol.map((opt) => (
+          <input key={opt} type="hidden" name="alcohol" value={opt} />
+        ))}
+        <div className="grid grid-cols-2 gap-2">
+          {ALCOHOL_OPTIONS.map((opt) => (
+            <button
+              key={opt}
+              type="button"
+              onClick={() => toggleAlcohol(opt)}
+              className="py-3 px-2 text-[18px] text-center leading-tight"
+              style={btnStyle(alcohol.includes(opt))}
+            >
+              {opt}
+            </button>
+          ))}
         </div>
-      )}
+      </div>
 
       {/* Комментарий */}
       <div>
-        <label
-          htmlFor="comment"
-          className="block text-[15px] sm:text-[18px] tracking-[0.15em] uppercase mb-2"
-          style={{ color: C.accent }}
-        >
+        <label htmlFor="rsvp-comment" className="block text-[15px] sm:text-[18px] tracking-[0.15em] uppercase mb-2" style={{ color: C.accent }}>
           Пожелания (необязательно)
         </label>
         <textarea
-          id="comment"
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          placeholder="Предпочтения по меню, особые пожелания…"
+          id="rsvp-comment"
+          name="comment"
+          placeholder="Особые пожелания…"
           rows={3}
           className="w-full px-0 py-3 text-[18px] sm:text-[21px] border-b bg-transparent resize-none placeholder:opacity-40"
           style={{ borderColor: C.accent, color: C.dark, outline: "none" }}
         />
       </div>
 
-      {formState === "error" && (
-        <p className="text-[21px] text-center" style={{ color: C.taupe }}>
-          Что-то пошло не так. Попробуйте ещё раз.
+      {state?.status === "error" && (
+        <p className="text-[18px] text-center" style={{ color: C.taupe }}>
+          {state.message ?? "Что-то пошло не так. Попробуйте ещё раз."}
         </p>
       )}
 
-      {/* Кнопка */}
       <button
         type="submit"
-        disabled={formState === "submitting"}
-        className="w-full text-[18px] sm:text-[21px] tracking-[0.2em] uppercase font-medium transition-all duration-200 disabled:opacity-50 active:opacity-70"
-        style={{
-          background: C.dark,
-          color: C.light,
-          height: "56px",
-        }}
-        onMouseEnter={(e) => {
-          if (formState !== "submitting")
-            (e.currentTarget as HTMLButtonElement).style.background = C.accent;
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background = C.dark;
-        }}
+        disabled={pending}
+        className="w-full text-[18px] sm:text-[21px] tracking-[0.2em] uppercase font-medium transition-all duration-200 disabled:opacity-50"
+        style={{ background: C.dark, color: C.light, height: "56px", border: "none", cursor: "pointer" }}
       >
-        {formState === "submitting" ? "Отправляем…" : "Подтвердить"}
+        {pending ? "Отправляем…" : "Подтвердить"}
       </button>
     </form>
   );
