@@ -199,10 +199,16 @@ export default function Home() {
         {/* ── 7.5. VK ЧАТ ── */}
         <section className="w-full text-center mt-12 sm:mt-16 animate-fade-up">
           <p
-            className="text-[18px] sm:text-[21px] mb-4"
-            style={{ color: C.dark, opacity: 0.8 }}
+            className="text-[15px] sm:text-[18px] tracking-[0.2em] uppercase mb-3"
+            style={{ color: C.accent }}
           >
-            Переходите в наш групповой чат
+            Чат для гостей
+          </p>
+          <p
+            className="text-[18px] sm:text-[21px] leading-relaxed mb-6 max-w-xs mx-auto"
+            style={{ color: C.dark, opacity: 0.75 }}
+          >
+            Присоединяйтесь к нашему чату в ВК, переходя по QR. Там мы будем делиться новостями и обмениваться видео и фото с торжества.
           </p>
           <a
             href="https://vk.me/join/dG_8Xr_GEVAIoH8BXp2STj6j2KzaGXyw_YU="
